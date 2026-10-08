@@ -48,7 +48,7 @@ app.post('/api/auth/:action', async (req, res) => {
     res.status(500).json({ error: 'We could not save your account. Please try again.' });
   }
 });
-app.get('/api/auth/me', (req, res) => { const user = auth.getSession(tokenFrom(req)); res.status(user ? 200 : 401).json({ user }); });
+app.get('/api/auth/me', (req, res) => { const user = auth.getSession(tokenFrom(req)); res.json({ user }); });
 app.get('/api/workspace', (req, res) => {
   const user = auth.getSession(tokenFrom(req));
   if (!user) { res.status(401).json({ error: 'Please sign in to continue.' }); return; }
