@@ -57,7 +57,11 @@ app.get('/api/workspace', (req, res) => {
 app.use('/api', (_req, res) => { res.status(404).json({ error: 'Not found.' }); });
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(root, 'dist'), { maxAge: '1h', index: false }));
-  app.get('/{*path}', (_req, res) => { res.set('Cache-Control', 'no-cache').sendFile(path.join(root, 'dist/index.html')); });
+  app.get('/{*path}', (req, res) => {
+    const page = req.path.replace(/\/$/, '') || '/';
+    const file = ['/docs', '/signin', '/signup', '/workspace'].includes(page) ? `${page.slice(1)}.html` : 'index.html';
+    res.set('Cache-Control', 'no-cache').sendFile(path.join(root, 'dist', file));
+  });
 }
 app.use((error: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(error instanceof SyntaxError ? 400 : 500).json({ error: 'The request could not be processed.' });

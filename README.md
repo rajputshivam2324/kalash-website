@@ -33,7 +33,7 @@ The walkthrough uses illustrative examples and does not call a model provider. T
 
 ## Vercel frontend deployment
 
-Deploy this directory as a **Vite** project, with build command `npm run build` and output directory `dist`. `vercel.json` rewrites `/docs`, `/signin`, `/signup`, and `/workspace` to the React entry point. These routes then work when opened directly, refreshed, or reached through navigation. Trailing slashes are normalized. Static assets and `/api` paths are not rewritten to HTML.
+Deploy this directory as a **Vite** project, with build command `npm run build` and output directory `dist`. The build prerenders the homepage, documentation, signin, signup, and public workspace gate into complete HTML using the same React components. `vercel.json` routes each page to its corresponding generated HTML file. Product content and documentation are readable before JavaScript runs, including by basic HTTP fetchers. React hydrates the HTML to enable interactive tabs, replay, and demo accounts. Account buttons are disabled until JavaScript loads; a notice explains this when JavaScript is disabled. These routes work when opened directly, refreshed, or reached through navigation. Trailing slashes are normalized. Static assets and `/api` paths are not rewritten to HTML.
 
 After adding or changing `vercel.json`, deploy a new version; a previously built deployment does not pick up local changes. This applies to `kalashcode.shivamio.in` as well as Vercel preview domains.
 

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n api,web \"tsx watch server/index.ts\" \"vite --host 127.0.0.1\"",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node --import tsx scripts/prerender.ts",
     "start": "NODE_ENV=production tsx server/index.ts",
     "test:auth": "node --import tsx --test server/auth.test.ts src/demo-auth.test.ts"
   },

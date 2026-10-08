@@ -5,9 +5,9 @@
   "outputDirectory": "dist",
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/docs", "destination": "/index.html" },
-    { "source": "/signin", "destination": "/index.html" },
-    { "source": "/signup", "destination": "/index.html" },
-    { "source": "/workspace", "destination": "/index.html" }
+    { "source": "/docs", "destination": "/docs.html" },
+    { "source": "/signin", "destination": "/signin.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/workspace", "destination": "/workspace.html" }
   ]
 }
