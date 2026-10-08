@@ -31,6 +31,14 @@ Open **http://127.0.0.1:3001**. Express serves the compiled website and the API 
 
 The walkthrough uses illustrative examples and does not call a model provider. The website does not launch the Kalash coding agent; that runtime runs in the developer's own environment.
 
+## Vercel frontend deployment
+
+Deploy this directory as a **Vite** project, with build command `npm run build` and output directory `dist`. `vercel.json` rewrites `/docs`, `/signin`, `/signup`, and `/workspace` to the React entry point. These routes then work when opened directly, refreshed, or reached through navigation. Trailing slashes are normalized. Static assets and `/api` paths are not rewritten to HTML.
+
+After adding or changing `vercel.json`, deploy a new version; a previously built deployment does not pick up local changes. This applies to `kalashcode.shivamio.in` as well as Vercel preview domains.
+
+**Authentication hosting:** a Vite-only deployment does not run `server/index.ts`. The file-backed account server needs a persistent, single-process Node host. A Vercel serverless function's filesystem and in-memory sessions are not durable/shared account storage, so moving the existing server into a function is not a reliable fix. To keep the no-database setup, host the Express server on a persistent Node host and proxy `/api/:path*` to that host before the page rewrites. Set `APP_ORIGIN=https://kalashcode.shivamio.in` and `COOKIE_SECURE=true` on that backend. Until a backend is connected, sign-in forms report that the account service is unavailable.
+
 ## Account storage
 
 Accounts are persisted in `.data/accounts.json` with per-account random salts and Node scrypt password hashes. There are no plaintext passwords. The `.data` directory is ignored by Git. Writes are serialized and committed with an atomic rename. This file store is designed for one server process.
