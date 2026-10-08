@@ -1,6 +1,6 @@
 # Kalash Code website
 
-React + TypeScript + Vite marketing website with a small Express authentication server. Everything lives in this directory. No database or Docker is required.
+React + TypeScript + Vite marketing website with same-browser demo accounts. Everything lives in this directory. No database, Docker, backend configuration, or Vercel environment variables are required for the demo.
 
 ## Run locally
 
@@ -37,24 +37,15 @@ Deploy this directory as a **Vite** project, with build command `npm run build` 
 
 After adding or changing `vercel.json`, deploy a new version; a previously built deployment does not pick up local changes. This applies to `kalashcode.shivamio.in` as well as Vercel preview domains.
 
-**Authentication hosting:** a Vite-only deployment does not run `server/index.ts`. The file-backed account server needs a persistent, single-process Node host. A Vercel serverless function's filesystem and in-memory sessions are not durable/shared account storage, so moving the existing server into a function is not a reliable fix. To keep the no-database setup, host the Express server on a persistent Node host and proxy `/api/:path*` to that host before the page rewrites. Set `APP_ORIGIN=https://kalashcode.shivamio.in` and `COOKIE_SECURE=true` on that backend. Until a backend is connected, sign-in forms report that the account service is unavailable.
+## Demo account storage
 
-## Account storage
+The website uses `src/demo-auth.ts` for signup, signin, session restoration, and logout. It does not request `/api/auth/*` or `/api/workspace`, so it works on a static Vercel deployment without the previously missing Express backend.
 
-Accounts are persisted in `.data/accounts.json` with per-account random salts and Node scrypt password hashes. There are no plaintext passwords. The `.data` directory is ignored by Git. Writes are serialized and committed with an atomic rename. This file store is designed for one server process.
+Accounts are saved in this browser's localStorage with a random 16-byte salt and a PBKDF2-SHA-256 password hash (600,000 iterations). Plaintext passwords are not stored or sent to a server. Sessions last 24 hours and survive refreshes and navigation. Signing out keeps the account available for another signin. Username matching is case-insensitive within the browser. Other tabs update after signin/signout.
 
-Sessions use random server-managed tokens in HttpOnly, SameSite=Strict cookies and expire after 24 hours. Sessions are held in memory, so restarting the server signs users out while retaining accounts. Authentication endpoints validate inputs, enforce permitted origins, and limit attempts. Password reset and email verification are not included.
+These are **demo accounts**, not production authentication. Accounts work only in the same browser profile on the same website origin. Clearing site storage deletes them, and private-browsing storage may disappear when the browser closes. Browser storage is user-controlled: this mechanism does not protect private server data or reserve usernames globally. Use a demo password. The workspace only provides public product setup guides.
 
-### Environment settings
-
-Optional `.env` files are not automatically loaded. Export environment variables in your shell before starting:
-
-- `PORT`: server port, default `3001`.
-- `APP_ORIGIN`: comma-separated allowed browser origins for write requests. Defaults to localhost and 127.0.0.1 on ports 5173 and 3001. Set this to your exact public HTTPS origin when hosting.
-- `COOKIE_SECURE=true`: use HTTPS-only cookies when hosting with TLS.
-- `ACCOUNT_FILE`: absolute path to account storage, default `.data/accounts.json`.
-
-The server binds to `127.0.0.1`. Use a reverse proxy for public hosting. Keep the account file outside publicly served directories and retain a writable persistent directory. No hosting configuration or container files are included.
+The existing `server/auth.ts` and `server/index.ts` file-backed server are retained for a future persistent backend, but the React demo no longer uses them. Switching to real accounts requires reconnecting that backend or adding shared persistent storage. No existing server account files are migrated into browser storage.
 
 ## Verification
 
